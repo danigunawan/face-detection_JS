@@ -49,7 +49,7 @@ function loadLabeledImages() {
 			const description = [];
 			for(let i=1; i<2; i++){
 				const image = await faceapi.fetchImage(`/face-detection_JS/labeled_images/${label}/${i}.jpg`);
-				const detections = await faceapi.detectSingleFace(image).withFaceLandmarks().withFaceDescriptors();
+				const detections = await faceapi.detectSingleFace(image).withFaceLandmarks().withFaceDescriptor();
 				description.push(detections.descriptor)
 			}
 			return new faceapi.LabeledFaceDescriptors(label, description);
