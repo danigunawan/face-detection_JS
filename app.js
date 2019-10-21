@@ -15,7 +15,7 @@ async function startVideo() {
 	navigator.getUserMedia({video: true}, stream => video.srcObject = stream, err => console.log(err));
 }
 
-video.addEventListener('play', () => {
+video.addEventListener('play', async () => {
 	const labeledFaceDescriptors = await loadLabeledImages();
 	const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
 	const canvas = faceapi.createCanvasFromMedia(video);
