@@ -11,11 +11,13 @@ Promise.all([
 	.catch(err => console.log(err));
 	
 
-function startVideo() {
+async function startVideo() {
 	navigator.getUserMedia({video: true}, stream => video.srcObject = stream, err => console.log(err));
 }
 
 video.addEventListener('play', () => {
+	const labeledFaceDescriptors = await loadLabeledImages();
+	const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
 	const canvas = faceapi.createCanvasFromMedia(video);
 	document.querySelector('#face-api').append(canvas)
 	const displaySize = {width: 720, height: 560}
@@ -25,15 +27,32 @@ video.addEventListener('play', () => {
 		// const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
 		const resizedDetections = faceapi.resizeResults (detections, displaySize);
 		canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-		resizedDetections.forEach(detection => {
-			const box = detection.detection.box;
-			const drawBox = new faceapi.draw.DrawBox(box, {label: 'Face'});
+		const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor))
+		results.forEach((result, i) => {
+			const box = resizedDetections[i].detection.box;
+			const drawBox = new faceapi.draw.DrawBox(box, {label: result.toString()});
 			drawBox.draw(canvas);
 		})
+		
 		// faceapi.draw.DrawBox(canvas, resizedDetections)
-		// faceapi.draw.drawDetections(canvas, resizedDetections);
+		faceapi.draw.drawDetections(canvas, resizedDetections);
 		faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
 		faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 		// video.style.display = 'none';
 		}, 100)
 })
+
+function loadLabeledImages() {
+	const labels = ['Piyush'];
+	return Promise.all(
+		labels.map(async label => {
+			const description = [];
+			for(let i=1; i<2; i++){
+				const image = await faceapi.fetchImage(`/face-detection_JS/labeled_images/${label}/${i}.jpg`);
+				const detections = await faceapi.detectSingleFace(image).withFaceLandmarks().withFaceDescriptors();
+				description.push(detections.descriptor)
+			}
+			return new faceapi.LabeledFaceDescriptors(label, description);
+		})
+	)
+}
