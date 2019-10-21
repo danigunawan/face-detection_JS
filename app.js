@@ -35,7 +35,7 @@ video.addEventListener('play', async () => {
 		})
 		
 		// faceapi.draw.DrawBox(canvas, resizedDetections)
-		faceapi.draw.drawDetections(canvas, resizedDetections);
+		// faceapi.draw.drawDetections(canvas, resizedDetections);
 		faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
 		faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 		// video.style.display = 'none';
