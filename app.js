@@ -24,6 +24,11 @@ video.addEventListener('play', () => {
 		const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions().withFaceDescriptors();
 		// const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
 		const resizedDetections = faceapi.resizeResults (detections, displaySize);
+		resizedDetections.forEach(detection => {
+			const box = detection.detection.box;
+			const drawBox = new faceapi.draw.DrawBox(box, {label: 'Face'});
+			drawBox.draw(canvas);
+		})
 		canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 		faceapi.draw.drawDetections(canvas, resizedDetections);
 		faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
