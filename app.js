@@ -5,6 +5,7 @@ Promise.all([
 	faceapi.nets.faceLandmark68Net.loadFromUri('/face-detection_JS//models'),
 	faceapi.nets.faceRecognitionNet.loadFromUri('/face-detection_JS//models'),
 	faceapi.nets.faceExpressionNet.loadFromUri('/face-detection_JS//models'),
+	faceapi.nets.ssdMobilenetv1.loadFromUri('/face-detection_JS/models')
 	])
 	.then(startVideo())
 	.catch(err => console.log(err));
